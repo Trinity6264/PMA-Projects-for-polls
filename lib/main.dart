@@ -1,12 +1,9 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:pma/local_services/firebase_services/fire_storage.dart';
 import 'package:pma/local_services/firebase_services/firebase_auth.dart';
 import 'package:pma/models/fire_user.dart';
 import 'package:pma/screens/loading.dart';
-import 'package:pma/screens/otpScreen.dart';
 import 'package:pma/screens/wrapper/authentication/authentication.dart';
 import 'package:pma/screens/wrapper/authentication/sign_in.dart';
 import 'package:pma/screens/wrapper/authentication/sign_up.dart';
@@ -52,8 +49,7 @@ class MyApp extends StatelessWidget {
           '/signIn': (_) => SignIn(),
           '/signUp': (_) => SignUp(),
           '/authentication': (_) => Authentication(),
-          '/otp': (_) => OtpScreen(),
-          'load': (_) => LoadingScreen(),
+          '/load': (_) => LoadingScreen(),
         },
       ),
     );

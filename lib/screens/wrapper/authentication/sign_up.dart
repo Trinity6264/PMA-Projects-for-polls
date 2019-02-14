@@ -1,15 +1,10 @@
-import 'dart:io';
-
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:image_picker/image_picker.dart';
+// import 'package:imei_plugin/imei_plugin.dart';
 import 'package:pma/local_services/firebase_services/firebase_auth.dart';
 import 'package:pma/screens/wrapper/home/pages/load_screen.dart';
 import 'package:pma/shared/inputDecor.dart';
-import 'package:provider/provider.dart';
 
 class SignUp extends StatefulWidget {
   const SignUp({Key? key, this.toggle}) : super(key: key);
@@ -21,24 +16,26 @@ class SignUp extends StatefulWidget {
 
 class _SignUpState extends State<SignUp> {
   String _displayName = '';
-  String _email = '';
-  String _password = '';
-  String error = '';
+
+  final FireAuth _auth = FireAuth.auth;
   bool isLoading = false;
-  final _auth = FireAuth.auth;
   final _formKey = GlobalKey<FormState>();
-  File? image;
-  Future getImage() async {
-    try {
-      final _image = await ImagePicker().pickImage(source: ImageSource.gallery);
-      if (_image == null) return;
-      setState(() {
-        image = File(_image.path);
-        print(image!.path);
-      });
-    } on Exception catch (e) {
-      print(e);
-    }
+
+  // imei var
+  // String imei = 'Unknown';
+
+  // Future imeiPlugin() async {
+  //   String multiImei =
+  //       await ImeiPlugin.getImei(shouldShowRequestPermissionRationale: false);
+  //   setState(() {
+  //     imei = multiImei;
+  //   });
+  // }
+
+  @override
+  void initState() {
+    // imeiPlugin();
+    super.initState();
   }
 
   @override
@@ -59,10 +56,11 @@ class _SignUpState extends State<SignUp> {
                     Padding(
                       padding: const EdgeInsets.all(50.0),
                       child: Text(
-                        'SIGN UP',
+                        'PMA POLL APP',
+                        maxLines: 1,
                         style: GoogleFonts.alike(
                           color: Color(0xFFFF8F00),
-                          fontSize: 40.0,
+                          fontSize: 28.0,
                           letterSpacing: 2.0,
                         ),
                       ),
@@ -73,61 +71,25 @@ class _SignUpState extends State<SignUp> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          TextFormField(
-                            onChanged: ((val) =>
-                                setState(() => _displayName = val)),
-                            validator: (val) =>
-                                val!.length < 3 ? 'User name is short' : null,
-                            style: TextStyle(
-                              color: Color(0xFFFFFFFF),
-                            ),
-                            keyboardType: TextInputType.name,
-                            textInputAction: TextInputAction.next,
-                            decoration: inputDecoration.copyWith(
-                              hintText: 'Username',
-                              hintStyle: GoogleFonts.aldrich(
-                                color: Colors.white,
-                                fontSize: 15,
-                                letterSpacing: 2.0,
+                          Padding(
+                            padding: const EdgeInsets.only(top: 100),
+                            child: TextFormField(
+                              onChanged: ((val) =>
+                                  setState(() => _displayName = val)),
+                              validator: (val) =>
+                                  val!.isEmpty ? 'Name must be provided' : null,
+                              style: TextStyle(
+                                color: Color(0xFFFFFFFF),
                               ),
-                            ),
-                          ),
-                          TextFormField(
-                            onChanged: ((val) => setState(() => _email = val)),
-                            style: TextStyle(
-                              color: Color(0xFFFFFFFF),
-                            ),
-                            keyboardType: TextInputType.emailAddress,
-                            textInputAction: TextInputAction.next,
-                            decoration: inputDecoration.copyWith(
-                              hintText: 'Email',
-                              hintStyle: GoogleFonts.aldrich(
-                                color: Colors.white,
-                                fontSize: 15,
-                                letterSpacing: 2.0,
-                              ),
-                            ),
-                          ),
-                          TextFormField(
-                            onChanged: ((val) =>
-                                setState(() => _password = val)),
-                            validator: (val) => val!.length < 6
-                                ? 'Password must be 6+ char'
-                                : null,
-                            style: TextStyle(
-                              color: Color(0xFFFFFFFF),
-                            ),
-                            keyboardType: TextInputType.visiblePassword,
-                            decoration: inputDecoration.copyWith(
-                              suffixIcon: Icon(
-                                Icons.remove_red_eye,
-                                color: Colors.amber,
-                              ),
-                              hintText: 'Password',
-                              hintStyle: GoogleFonts.aldrich(
-                                color: Colors.white,
-                                fontSize: 15,
-                                letterSpacing: 2.0,
+                              keyboardType: TextInputType.name,
+                              textInputAction: TextInputAction.next,
+                              decoration: inputDecoration.copyWith(
+                                hintText: 'Enter your name',
+                                hintStyle: GoogleFonts.aldrich(
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                  letterSpacing: 2.0,
+                                ),
                               ),
                             ),
                           ),
@@ -147,7 +109,7 @@ class _SignUpState extends State<SignUp> {
                                       ),
                                     ),
                                     child: Text(
-                                      'CREATE MY ACCOUNT',
+                                      'Let\'s Go',
                                       style: GoogleFonts.aldrich(
                                         fontSize: 17,
                                         fontWeight: FontWeight.w500,
@@ -156,53 +118,21 @@ class _SignUpState extends State<SignUp> {
                                     ),
                                     onPressed: () async {
                                       if (_formKey.currentState!.validate()) {
-                                        setState(() {
-                                          isLoading = true;
-                                        });
-                                        dynamic result = _auth.creatingNewUser(
-                                          name: _displayName,
-                                          email: _email,
-                                          password: _password,
-                                        );
-                                        print(result);
-                                        if (result == null) {
-                                          setState(() {
-                                            error = _auth.error;
-                                            isLoading = false;
-                                          });
-                                        }
-                                        print(_displayName);
+                                        // setState(() {
+                                        //   isLoading = true;
+                                        // });
+                                        // dynamic results =
+                                        //     _auth.signInAnon(_displayName);
+                                        // if (results == null) {
+                                        //   setState(() {
+                                        //     isLoading = false;
+                                        //   });
+                                        // }
                                       }
                                     },
                                   ),
                           ),
                         ],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(20.0),
-                      child: RichText(
-                        text: TextSpan(children: [
-                          TextSpan(text: 'Already have an Account? '),
-                          TextSpan(
-                            recognizer: TapGestureRecognizer()
-                              ..onTap = () {
-                                widget.toggle!();
-                              },
-                            text: ' Sign In',
-                            style: GoogleFonts.aldrich(
-                              color: Colors.amber,
-                              fontSize: 20.0,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ]),
-                      ),
-                    ),
-                    Center(
-                      child: Text(
-                        error,
-                        style: TextStyle(color: Colors.red, fontSize: 20),
                       ),
                     ),
                   ],
