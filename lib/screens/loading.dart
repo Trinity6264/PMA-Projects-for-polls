@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pma/shared/colors.dart';
 
@@ -47,7 +48,7 @@ class _LoadingState extends State<Loading> {
                   ),
                 ),
                 Spacer(),
-                CircularProgressIndicator(),
+                SpinKitRipple(color: Colors.amber),
                 Spacer()
               ],
             ),

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:pma/local_services/firebase_services/firebase_auth.dart';
 import 'package:pma/models/fire_user.dart';
 import 'package:pma/screens/wrapper/home/pages/user_profile.dart';
 import 'package:pma/screens/wrapper/home/pages/home_screen.dart';
@@ -29,7 +28,7 @@ class _HomeState extends State<Home> {
   final PageStorageBucket bucket = PageStorageBucket();
   @override
   Widget build(BuildContext context) {
-    final _user = Provider.of<CustomUser?>(context);
+    final _user = Provider.of<CustomUser>(context, listen: false);
     Size _size = MediaQuery.of(context).size;
     return Scaffold(
       body: PageStorage(
@@ -161,14 +160,14 @@ class _HomeState extends State<Home> {
                         ),
                         SizedBox(height: _size.height * 0.1 / 9),
                         Text(
-                          _user!.userName
+                          _user.userName
                                   .toString()
                                   .substring(0, 1)
                                   .toUpperCase() +
                               "" +
                               _user.userName
                                   .toString()
-                                  .substring(1, _user.userName!.length)
+                                  .substring(1, _user.userName?.length)
                                   .toLowerCase(),
                           style: GoogleFonts.aldrich(
                             color: currentTab == 1 ? Colors.amber : Colors.grey,

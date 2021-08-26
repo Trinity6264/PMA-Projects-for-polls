@@ -11,6 +11,7 @@ import 'package:pma/screens/wrapper/authentication/authentication.dart';
 import 'package:pma/screens/wrapper/authentication/sign_in.dart';
 import 'package:pma/screens/wrapper/authentication/sign_up.dart';
 import 'package:pma/screens/wrapper/home/home.dart';
+import 'package:pma/screens/wrapper/home/pages/load_screen.dart';
 import 'package:pma/screens/wrapper/wrapper.dart';
 import 'package:provider/provider.dart';
 
@@ -39,7 +40,7 @@ class MyApp extends StatelessWidget {
       ],
       builder: (_, __) => MaterialApp(
         debugShowCheckedModeBanner: false,
-        title: 'Flutter Demo',
+        title: 'PMA Entertainment'.toUpperCase(),
         theme: ThemeData(
           primarySwatch: Colors.amber,
         ),
@@ -52,6 +53,7 @@ class MyApp extends StatelessWidget {
           '/signUp': (_) => SignUp(),
           '/authentication': (_) => Authentication(),
           '/otp': (_) => OtpScreen(),
+          'load': (_) => LoadingScreen(),
         },
       ),
     );
