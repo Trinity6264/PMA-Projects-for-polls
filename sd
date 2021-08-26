@@ -1,0 +1,11 @@
+[33mcommit b8003505651f5424d4b5109bd7911aa5e0508e04[m[33m ([m[1;36mHEAD -> [m[1;32mmaster[m[33m)[m
+Author: Trinity <amoahtnt6@gmail.com>
+Date:   Thu Aug 26 12:42:14 2021 +0000
+
+    Making changes to use email and password as sign up and sign in authentication
+
+[33mcommit 56c9e815d2033883fd026e9ad9978db1f9220366[m
+Author: Trinity <amoahtnt6@gmail.com>
+Date:   Thu Aug 26 10:39:42 2021 +0000
+
+    Creating PMA Entertainment poll project
