@@ -6,6 +6,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:imei_plugin/imei_plugin.dart';
 import 'package:pma/local_services/firebase_services/firebase_auth.dart';
 import 'package:pma/screens/wrapper/home/pages/load_screen.dart';
 import 'package:pma/shared/inputDecor.dart';
@@ -39,6 +40,23 @@ class _SignUpState extends State<SignUp> {
     } on Exception catch (e) {
       print(e);
     }
+  }
+
+  // imei var
+  String imei = 'Unknown';
+
+  Future imeiPlugin() async {
+    String multiImei =
+        await ImeiPlugin.getImei(shouldShowRequestPermissionRationale: false);
+    setState(() {
+      imei = multiImei;
+    });
+  }
+
+  @override
+  void initState() {
+    imeiPlugin();
+    super.initState();
   }
 
   @override
@@ -201,8 +219,8 @@ class _SignUpState extends State<SignUp> {
                     ),
                     Center(
                       child: Text(
-                        error,
-                        style: TextStyle(color: Colors.red, fontSize: 20),
+                        imei,
+                        style: TextStyle(color: Colors.amber, fontSize: 20),
                       ),
                     ),
                   ],
