@@ -15,9 +15,6 @@ class HomeScreen extends StatelessWidget {
         backgroundColor: Color(0xFF000000),
         elevation: 0.0,
         actions: [
-          CircleAvatar(
-            backgroundColor: Colors.amber,
-          ),
           TextButton(
             onPressed: () async {
               return await _auth.signOut();

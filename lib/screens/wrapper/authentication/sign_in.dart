@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:pma/local_services/firebase_services/firebase_auth.dart';
 import 'package:pma/shared/inputDecor.dart';
 
 class SignIn extends StatefulWidget {
@@ -12,6 +13,12 @@ class SignIn extends StatefulWidget {
 }
 
 class _SignInState extends State<SignIn> {
+  bool isLoading = false;
+  final _auth = FireAuth.auth;
+  final _formKey = GlobalKey<FormState>();
+  String _email = '';
+  String _password = '';
+  String error = '';
   @override
   Widget build(BuildContext context) {
     Size _size = MediaQuery.of(context).size;
@@ -36,11 +43,15 @@ class _SignInState extends State<SignIn> {
                 ),
               ),
               Form(
+                key: _formKey,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     TextFormField(
+                      onChanged: ((val) => setState(() => _email = val)),
+                      validator: (val) => val!.isEmpty ? 'Provide email' : null,
+                      style: TextStyle(color: Color(0xFFFFFFFF)),
                       decoration: inputDecoration.copyWith(
                         hintText: 'Email',
                         hintStyle: GoogleFonts.aldrich(
@@ -51,6 +62,10 @@ class _SignInState extends State<SignIn> {
                       ),
                     ),
                     TextFormField(
+                      onChanged: ((val) => setState(() => _password = val)),
+                      validator: (val) =>
+                          val!.isEmpty ? 'Provide password' : null,
+                      style: TextStyle(color: Color(0xFFFFFFFF)),
                       decoration: inputDecoration.copyWith(
                         suffixIcon: Icon(
                           Icons.remove_red_eye,
@@ -67,48 +82,49 @@ class _SignInState extends State<SignIn> {
                     SizedBox(
                       height: _size.height * 0.1 / 2,
                     ),
-                    Container(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(50),
+                    isLoading
+                        ? CircularProgressIndicator()
+                        : Container(
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.only(
+                                      bottomLeft: Radius.circular(30),
+                                      topRight: Radius.circular(30)),
+                                ),
+                              ),
+                              child: Text(
+                                'SIGN IN',
+                                style: GoogleFonts.aldrich(
+                                  fontSize: 17,
+                                  fontWeight: FontWeight.w500,
+                                  letterSpacing: 2.0,
+                                ),
+                              ),
+                              onPressed: () {
+                                if (_formKey.currentState!.validate()) {
+                                  setState(() {
+                                    isLoading = true;
+                                  });
+                                  dynamic user =
+                                      _auth.signInWithEmailAndPassword(
+                                    _email,
+                                    _password,
+                                  );
+                                  if (user == null) {
+                                    setState(() {
+                                      error = _auth.error;
+                                      isLoading = false;
+                                    });
+                                  }
+                                }
+                              },
+                            ),
                           ),
-                        ),
-                        child: Text(
-                          'SIGN IN',
-                          style: GoogleFonts.aldrich(
-                            fontSize: 17,
-                            fontWeight: FontWeight.w500,
-                            letterSpacing: 2.0,
-                          ),
-                        ),
-                        onPressed: () {},
-                      ),
-                    ),
                   ],
                 ),
               ),
-              // Text(
-              //   'or login with',
-              //   style: GoogleFonts.aldrich(
-              //     color: Colors.white,
-              //     fontSize: 20.0,
-              //     fontStyle: FontStyle.italic,
-              //     letterSpacing: 1.5,
-              //   ),
-              // ),
-              // Padding(
-              //   padding: const EdgeInsets.symmetric(vertical: 40.0),
-              //   child: Row(
-              //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              //     children: [
-              //       _authLogo('Google'),
-              //       _authLogo('Facebook'),
-              //       _authLogo('Twitter'),
-              //     ],
-              //   ),
-              // ),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 50.0),
                 child: RichText(
@@ -129,7 +145,13 @@ class _SignInState extends State<SignIn> {
                     ),
                   ]),
                 ),
-              )
+              ),
+              Center(
+                child: Text(
+                  error,
+                  style: TextStyle(color: Colors.red, fontSize: 20),
+                ),
+              ),
             ],
           ),
         ),

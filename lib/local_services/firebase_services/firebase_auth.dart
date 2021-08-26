@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:pma/models/fire_user.dart';
 
 class FireAuth with ChangeNotifier {
@@ -28,29 +29,39 @@ class FireAuth with ChangeNotifier {
         .map((User? event) => _userFromFirebase(user: event));
   }
 
-  // Sign Up with your phone number
-  Future signUpwithPhone(
-      {required String number, required String userName}) async {
+  // Create new account
+  Future creatingNewUser(
+      {required String name,
+      required String email,
+      required String password}) async {
     try {
-      // _auth.verifyPhoneNumber(
-      // phoneNumber: number,
-      // verificationCompleted: _verificationCompleted,
-      // verificationFailed: null,
-      // codeSent: null,
-      // codeAutoRetrievalTimeout: null,
-      // );
+      UserCredential user = await _auth.createUserWithEmailAndPassword(
+          email: email, password: password);
+      User? _user = user.user;
+      _user!.updateDisplayName(name);
+      return _userFromFirebase(user: _user);
     } on FirebaseAuthException catch (e) {
-      print(e.message);
+      _error = e.message;
+      return null;
     }
   }
 
-  Future _verificationCompleted(PhoneAuthCredential credential) async {
-    try {} on FirebaseAuthException catch (e) {
-      print(e.message);
+  // Sign in
+
+  Future signInWithEmailAndPassword(String email, String password) async {
+    try {
+      UserCredential user = await _auth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      User? _user = user.user;
+      return _userFromFirebase(user: _user);
+    } catch (e) {
+      print(e.toString());
     }
   }
 
-  // sign Up with Email And Password
+  // sign Out
   Future signOut() async {
     try {
       return _auth.signOut();

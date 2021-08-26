@@ -21,6 +21,8 @@ class _SignUpState extends State<SignUp> {
   String _displayName = '';
   String _email = '';
   String _password = '';
+  String error = '';
+  bool isLoading = false;
   final _auth = FireAuth.auth;
   final _formKey = GlobalKey<FormState>();
   File? image;
@@ -60,22 +62,6 @@ class _SignUpState extends State<SignUp> {
                   ),
                 ),
               ),
-              Center(
-                child: GestureDetector(
-                  onTap: getImage,
-                  child: CircleAvatar(
-                    maxRadius: 80,
-                    backgroundImage: AssetImage(
-                        '/data/user/0/com.example.pma/cache/image_picker1509911066.jpg'),
-                    backgroundColor: Colors.amber,
-                    child: Icon(
-                      FontAwesomeIcons.cameraRetro,
-                      color: Color(0xFF000000),
-                      size: 40,
-                    ),
-                  ),
-                ),
-              ),
               Form(
                 key: _formKey,
                 child: Column(
@@ -105,10 +91,10 @@ class _SignUpState extends State<SignUp> {
                       style: TextStyle(
                         color: Color(0xFFFFFFFF),
                       ),
-                      keyboardType: TextInputType.phone,
+                      keyboardType: TextInputType.emailAddress,
                       textInputAction: TextInputAction.next,
                       decoration: inputDecoration.copyWith(
-                        hintText: 'Phone Number',
+                        hintText: 'Email',
                         hintStyle: GoogleFonts.aldrich(
                           color: Colors.white,
                           fontSize: 15,
@@ -141,34 +127,45 @@ class _SignUpState extends State<SignUp> {
                       height: _size.height * 0.1 / 2,
                     ),
                     Container(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.only(
-                                bottomLeft: Radius.circular(30),
-                                topRight: Radius.circular(30)),
-                          ),
-                        ),
-                        child: Text(
-                          'CREATE MY ACCOUNT',
-                          style: GoogleFonts.aldrich(
-                            fontSize: 17,
-                            fontWeight: FontWeight.w500,
-                            letterSpacing: 2.0,
-                          ),
-                        ),
-                        onPressed: () async {
-                          if (_formKey.currentState!.validate()) {
-                            print(_email);
-                            // // return await _auth.signWithPhone(
-                            // //   email: _email,
-                            // //   password: _password,
-                            // //   displaName: _displayName,
-                            // );
-                          }
-                        },
-                      ),
+                      width: isLoading == true ? 40 : double.infinity,
+                      child: isLoading == true
+                          ? CircularProgressIndicator()
+                          : ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.only(
+                                      bottomLeft: Radius.circular(30),
+                                      topRight: Radius.circular(30)),
+                                ),
+                              ),
+                              child: Text(
+                                'CREATE MY ACCOUNT',
+                                style: GoogleFonts.aldrich(
+                                  fontSize: 17,
+                                  fontWeight: FontWeight.w500,
+                                  letterSpacing: 2.0,
+                                ),
+                              ),
+                              onPressed: () async {
+                                if (_formKey.currentState!.validate()) {
+                                  setState(() {
+                                    isLoading = true;
+                                  });
+                                  dynamic result = _auth.creatingNewUser(
+                                    name: _displayName,
+                                    email: _email,
+                                    password: _password,
+                                  );
+                                  if (result == null) {
+                                    setState(() {
+                                      error = _auth.error;
+                                      isLoading = false;
+                                    });
+                                  }
+                                  print(_displayName);
+                                }
+                              },
+                            ),
                     ),
                   ],
                 ),
@@ -193,11 +190,12 @@ class _SignUpState extends State<SignUp> {
                   ]),
                 ),
               ),
-              Consumer<FireAuth>(builder: (_, data, __) {
-                return Center(
-                  child: Text(data.error),
-                );
-              }),
+              Center(
+                child: Text(
+                  error,
+                  style: TextStyle(color: Colors.red, fontSize: 20),
+                ),
+              ),
             ],
           ),
         ),
