@@ -1,0 +1,207 @@
+import 'dart:io';
+
+import 'package:flutter/gestures.dart';
+import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:pma/local_services/firebase_services/firebase_auth.dart';
+import 'package:pma/shared/inputDecor.dart';
+import 'package:provider/provider.dart';
+
+class SignUp extends StatefulWidget {
+  const SignUp({Key? key, this.toggle}) : super(key: key);
+  final Function? toggle;
+
+  @override
+  _SignUpState createState() => _SignUpState();
+}
+
+class _SignUpState extends State<SignUp> {
+  String _displayName = '';
+  String _email = '';
+  String _password = '';
+  final _auth = FireAuth.auth;
+  final _formKey = GlobalKey<FormState>();
+  File? image;
+  Future getImage() async {
+    try {
+      final _image = await ImagePicker().pickImage(source: ImageSource.gallery);
+      if (_image == null) return;
+      setState(() {
+        image = File(_image.path);
+        print(image!.path);
+      });
+    } on Exception catch (e) {
+      print(e);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    Size _size = MediaQuery.of(context).size;
+    return Scaffold(
+      backgroundColor: Color(0xFF000000),
+      body: SingleChildScrollView(
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+          width: double.infinity,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(50.0),
+                child: Text(
+                  'SIGN UP',
+                  style: GoogleFonts.alike(
+                    color: Color(0xFFFF8F00),
+                    fontSize: 40.0,
+                    letterSpacing: 2.0,
+                  ),
+                ),
+              ),
+              Center(
+                child: GestureDetector(
+                  onTap: getImage,
+                  child: CircleAvatar(
+                    maxRadius: 80,
+                    backgroundImage: AssetImage(
+                        '/data/user/0/com.example.pma/cache/image_picker1509911066.jpg'),
+                    backgroundColor: Colors.amber,
+                    child: Icon(
+                      FontAwesomeIcons.cameraRetro,
+                      color: Color(0xFF000000),
+                      size: 40,
+                    ),
+                  ),
+                ),
+              ),
+              Form(
+                key: _formKey,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    TextFormField(
+                      onChanged: ((val) => setState(() => _displayName = val)),
+                      validator: (val) =>
+                          val!.length < 3 ? 'User name is short' : null,
+                      style: TextStyle(
+                        color: Color(0xFFFFFFFF),
+                      ),
+                      keyboardType: TextInputType.name,
+                      textInputAction: TextInputAction.next,
+                      decoration: inputDecoration.copyWith(
+                        hintText: 'Username',
+                        hintStyle: GoogleFonts.aldrich(
+                          color: Colors.white,
+                          fontSize: 15,
+                          letterSpacing: 2.0,
+                        ),
+                      ),
+                    ),
+                    TextFormField(
+                      onChanged: ((val) => setState(() => _email = val)),
+                      style: TextStyle(
+                        color: Color(0xFFFFFFFF),
+                      ),
+                      keyboardType: TextInputType.phone,
+                      textInputAction: TextInputAction.next,
+                      decoration: inputDecoration.copyWith(
+                        hintText: 'Phone Number',
+                        hintStyle: GoogleFonts.aldrich(
+                          color: Colors.white,
+                          fontSize: 15,
+                          letterSpacing: 2.0,
+                        ),
+                      ),
+                    ),
+                    TextFormField(
+                      onChanged: ((val) => setState(() => _password = val)),
+                      validator: (val) =>
+                          val!.length < 6 ? 'Password must be 6+ char' : null,
+                      style: TextStyle(
+                        color: Color(0xFFFFFFFF),
+                      ),
+                      keyboardType: TextInputType.visiblePassword,
+                      decoration: inputDecoration.copyWith(
+                        suffixIcon: Icon(
+                          Icons.remove_red_eye,
+                          color: Colors.amber,
+                        ),
+                        hintText: 'Password',
+                        hintStyle: GoogleFonts.aldrich(
+                          color: Colors.white,
+                          fontSize: 15,
+                          letterSpacing: 2.0,
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: _size.height * 0.1 / 2,
+                    ),
+                    Container(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.only(
+                                bottomLeft: Radius.circular(30),
+                                topRight: Radius.circular(30)),
+                          ),
+                        ),
+                        child: Text(
+                          'CREATE MY ACCOUNT',
+                          style: GoogleFonts.aldrich(
+                            fontSize: 17,
+                            fontWeight: FontWeight.w500,
+                            letterSpacing: 2.0,
+                          ),
+                        ),
+                        onPressed: () async {
+                          if (_formKey.currentState!.validate()) {
+                            print(_email);
+                            // // return await _auth.signWithPhone(
+                            // //   email: _email,
+                            // //   password: _password,
+                            // //   displaName: _displayName,
+                            // );
+                          }
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: RichText(
+                  text: TextSpan(children: [
+                    TextSpan(text: 'Already have an Account? '),
+                    TextSpan(
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () {
+                          widget.toggle!();
+                        },
+                      text: ' Sign In',
+                      style: GoogleFonts.aldrich(
+                        color: Colors.amber,
+                        fontSize: 20.0,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ]),
+                ),
+              ),
+              Consumer<FireAuth>(builder: (_, data, __) {
+                return Center(
+                  child: Text(data.error),
+                );
+              }),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

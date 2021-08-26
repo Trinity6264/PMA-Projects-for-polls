@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "1065700879064",
+    "project_id": "pma-etertainment",
+    "storage_bucket": "pma-etertainment.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1065700879064:android:3064d38b55133fe57705ad",
+        "android_client_info": {
+          "package_name": "com.example.pma"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1065700879064-cs1al64ih7e5vbrjm7ceqtt10chj2piq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.pma",
+            "certificate_hash": "263930a1822d55763e93112512649084ad4257ae"
+          }
+        },
+        {
+          "client_id": "1065700879064-cf89oju04o45s3abbc6mpq0l71nncurm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDqBVZkGg75FSrIrj1aywvQDsVVw0PBj1w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1065700879064-cf89oju04o45s3abbc6mpq0l71nncurm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
