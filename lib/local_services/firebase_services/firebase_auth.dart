@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:pma/local_services/firestore_services/local_store.dart';
 import 'package:pma/models/fire_user.dart';
 
 class FireAuth with ChangeNotifier {
@@ -43,6 +44,20 @@ class FireAuth with ChangeNotifier {
     } on FirebaseAuthException catch (e) {
       _error = e.message;
       return null;
+    }
+  }
+
+  // Anon sign In
+
+  Future signInAnon(String name) async {
+    try {
+      _auth.signInAnonymously().then((value) {
+        _auth.currentUser?.updateDisplayName(name);
+        LocalStore(uid: _auth.currentUser!.uid).updateUser(name, 'play6264');
+        return _userFromFirebase(user: _auth.currentUser);
+      });
+    } on FirebaseAuthException catch (e) {
+      print(e.message);
     }
   }
 

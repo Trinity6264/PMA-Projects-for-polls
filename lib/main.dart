@@ -1,8 +1,6 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:pma/local_services/firebase_services/fire_storage.dart';
 import 'package:pma/local_services/firebase_services/firebase_auth.dart';
 import 'package:pma/models/fire_user.dart';
 import 'package:pma/screens/loading.dart';
@@ -21,6 +19,9 @@ void main() async {
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitDown,
     DeviceOrientation.portraitUp,
+  ]);
+  await SystemChrome.setEnabledSystemUIOverlays([
+    SystemUiOverlay.top,
   ]);
   runApp(MyApp());
 }
