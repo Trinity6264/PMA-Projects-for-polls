@@ -24,11 +24,20 @@ class _HomeState extends State<Home> {
   ];
   Widget currentScreen = HomeScreen();
   int currentTab = 0;
+  String _name = '';
 
   final PageStorageBucket bucket = PageStorageBucket();
   @override
   Widget build(BuildContext context) {
-    final _user = Provider.of<CustomUser>(context, listen: false);
+    final _user = Provider.of<CustomUser>(context);
+    setState(() {
+      _name = _user.userName.toString().substring(0, 1).toUpperCase() +
+          "" +
+          _user.userName
+              .toString()
+              .substring(1, _user.userName?.length)
+              .toLowerCase();
+    });
     Size _size = MediaQuery.of(context).size;
     return Scaffold(
       body: PageStorage(
@@ -160,15 +169,7 @@ class _HomeState extends State<Home> {
                         ),
                         SizedBox(height: _size.height * 0.1 / 9),
                         Text(
-                          _user.userName
-                                  .toString()
-                                  .substring(0, 1)
-                                  .toUpperCase() +
-                              "" +
-                              _user.userName
-                                  .toString()
-                                  .substring(1, _user.userName?.length)
-                                  .toLowerCase(),
+                          _name,
                           style: GoogleFonts.aldrich(
                             color: currentTab == 1 ? Colors.amber : Colors.grey,
                           ),

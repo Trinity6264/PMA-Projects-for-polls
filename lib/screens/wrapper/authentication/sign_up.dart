@@ -1,5 +1,7 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 // import 'package:imei_plugin/imei_plugin.dart';
 import 'package:pma/local_services/firebase_services/firebase_auth.dart';
@@ -16,36 +18,22 @@ class SignUp extends StatefulWidget {
 
 class _SignUpState extends State<SignUp> {
   String _displayName = '';
+  String _emailadd = '';
+  String _password = '';
 
   final FireAuth _auth = FireAuth.auth;
   bool isLoading = false;
+  bool isSeen = false;
   final _formKey = GlobalKey<FormState>();
-
-  // imei var
-  // String imei = 'Unknown';
-
-  // Future imeiPlugin() async {
-  //   String multiImei =
-  //       await ImeiPlugin.getImei(shouldShowRequestPermissionRationale: false);
-  //   setState(() {
-  //     imei = multiImei;
-  //   });
-  // }
-
-  @override
-  void initState() {
-    // imeiPlugin();
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
     Size _size = MediaQuery.of(context).size;
-    return Scaffold(
-      backgroundColor: Color(0xFF000000),
-      body: isLoading == true
-          ? LoadingScreen()
-          : SingleChildScrollView(
+    return isLoading
+        ? LoadingScreen()
+        : Scaffold(
+            backgroundColor: Color(0xFF000000),
+            body: SingleChildScrollView(
               child: Container(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
@@ -54,13 +42,12 @@ class _SignUpState extends State<SignUp> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.all(50.0),
+                      padding: const EdgeInsets.only(top: 70),
                       child: Text(
-                        'PMA POLL APP',
-                        maxLines: 1,
+                        'ADMIN PANEL',
                         style: GoogleFonts.alike(
                           color: Color(0xFFFF8F00),
-                          fontSize: 28.0,
+                          fontSize: 30.0,
                           letterSpacing: 2.0,
                         ),
                       ),
@@ -68,28 +55,85 @@ class _SignUpState extends State<SignUp> {
                     Form(
                       key: _formKey,
                       child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Padding(
-                            padding: const EdgeInsets.only(top: 100),
-                            child: TextFormField(
-                              onChanged: ((val) =>
-                                  setState(() => _displayName = val)),
-                              validator: (val) =>
-                                  val!.isEmpty ? 'Name must be provided' : null,
-                              style: TextStyle(
-                                color: Color(0xFFFFFFFF),
+                          SizedBox(height: 50.0),
+                          TextFormField(
+                            onChanged: ((val) =>
+                                setState(() => _displayName = val)),
+                            validator: (val) =>
+                                val!.isEmpty ? 'Name must be provided' : null,
+                            style: TextStyle(
+                              color: Color(0xFFFFFFFF),
+                            ),
+                            keyboardType: TextInputType.name,
+                            textInputAction: TextInputAction.next,
+                            decoration: inputDecoration.copyWith(
+                              hintText: 'Nickname',
+                              hintStyle: GoogleFonts.aldrich(
+                                color: Colors.white,
+                                fontSize: 15,
+                                letterSpacing: 2.0,
                               ),
-                              keyboardType: TextInputType.name,
-                              textInputAction: TextInputAction.next,
-                              decoration: inputDecoration.copyWith(
-                                hintText: 'Enter your name',
-                                hintStyle: GoogleFonts.aldrich(
-                                  color: Colors.white,
-                                  fontSize: 15,
-                                  letterSpacing: 2.0,
-                                ),
+                            ),
+                          ),
+                          TextFormField(
+                            onChanged: ((val) =>
+                                setState(() => _emailadd = val)),
+                            validator: (val) =>
+                                val!.isEmpty ? 'Email must be provided' : null,
+                            style: TextStyle(
+                              color: Color(0xFFFFFFFF),
+                            ),
+                            keyboardType: TextInputType.name,
+                            textInputAction: TextInputAction.next,
+                            decoration: inputDecoration.copyWith(
+                              hintText: 'Email',
+                              hintStyle: GoogleFonts.aldrich(
+                                color: Colors.white,
+                                fontSize: 15,
+                                letterSpacing: 2.0,
+                              ),
+                            ),
+                          ),
+                          TextFormField(
+                            obscureText: isSeen,
+                            onChanged: ((val) =>
+                                setState(() => _password = val)),
+                            validator: (val) => val!.isEmpty
+                                ? 'Password must be provided'
+                                : null,
+                            style: TextStyle(
+                              color: Color(0xFFFFFFFF),
+                            ),
+                            keyboardType: TextInputType.visiblePassword,
+                            textInputAction: TextInputAction.done,
+                            decoration: inputDecoration.copyWith(
+                              suffixIcon: isSeen
+                                  ? IconButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          isSeen = false;
+                                        });
+                                      },
+                                      icon: Icon(Icons.remove_red_eye,
+                                          color: Colors.amber),
+                                    )
+                                  : IconButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          isSeen = true;
+                                        });
+                                      },
+                                      icon: Icon(Icons.remove_red_eye_rounded,
+                                          color: Colors.amber),
+                                    ),
+                              hintText: 'Password',
+                              hintStyle: GoogleFonts.aldrich(
+                                color: Colors.white,
+                                fontSize: 15,
+                                letterSpacing: 2.0,
                               ),
                             ),
                           ),
@@ -102,14 +146,16 @@ class _SignUpState extends State<SignUp> {
                                 ? SpinKitPouringHourglass(color: Colors.amber)
                                 : ElevatedButton(
                                     style: ElevatedButton.styleFrom(
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.only(
-                                            bottomLeft: Radius.circular(30),
-                                            topRight: Radius.circular(30)),
+                                      shape: const RoundedRectangleBorder(
+                                        borderRadius: const BorderRadius.only(
+                                            bottomLeft:
+                                                const Radius.circular(30),
+                                            topRight:
+                                                const Radius.circular(30)),
                                       ),
                                     ),
                                     child: Text(
-                                      'Let\'s Go',
+                                      'Sign Up',
                                       style: GoogleFonts.aldrich(
                                         fontSize: 17,
                                         fontWeight: FontWeight.w500,
@@ -118,19 +164,51 @@ class _SignUpState extends State<SignUp> {
                                     ),
                                     onPressed: () async {
                                       if (_formKey.currentState!.validate()) {
-                                        // setState(() {
-                                        //   isLoading = true;
-                                        // });
-                                        // dynamic results =
-                                        //     _auth.signInAnon(_displayName);
-                                        // if (results == null) {
-                                        //   setState(() {
-                                        //     isLoading = false;
-                                        //   });
-                                        // }
+                                        setState(() {
+                                          isLoading = true;
+                                        });
+                                        dynamic user =
+                                            await _auth.creatingNewUser(
+                                          name: _displayName,
+                                          email: _emailadd,
+                                          password: _password,
+                                        );
+                                        if (user == null) {
+                                          setState(() {
+                                            isLoading = false;
+                                          });
+                                        }
                                       }
                                     },
                                   ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(20.0),
+                            child: RichText(
+                              text: TextSpan(
+                                children: [
+                                  TextSpan(text: 'Already have an account? '),
+                                  TextSpan(
+                                    recognizer: TapGestureRecognizer()
+                                      ..onTap = () {
+                                        widget.toggle!();
+                                      },
+                                    text: 'Sign In',
+                                    style: TextStyle(
+                                      color: Colors.amber,
+                                      fontSize: 20,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          Text(
+                            _auth.errorMess,
+                            style: GoogleFonts.aldrich(
+                              color: Colors.red,
+                              fontSize: 15,
+                            ),
                           ),
                         ],
                       ),
@@ -139,6 +217,6 @@ class _SignUpState extends State<SignUp> {
                 ),
               ),
             ),
-    );
+          );
   }
 }

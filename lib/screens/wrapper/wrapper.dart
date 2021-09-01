@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pma/models/fire_user.dart';
+import 'package:pma/screens/admin/admin_home.dart';
 import 'package:pma/screens/wrapper/authentication/authentication.dart';
-import 'package:pma/screens/wrapper/home/home.dart';
 import 'package:provider/provider.dart';
 
 class Wrapper extends StatelessWidget {
@@ -10,6 +10,6 @@ class Wrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<CustomUser?>(context);
-    return user != null ? Home() : Authentication();
+    return user != null ? AdminHome() : Authentication();
   }
 }

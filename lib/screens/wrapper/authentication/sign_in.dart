@@ -106,19 +106,19 @@ class _SignInState extends State<SignIn> {
                                   letterSpacing: 2.0,
                                 ),
                               ),
-                              onPressed: () {
+                              onPressed: () async {
                                 if (_formKey.currentState!.validate()) {
                                   setState(() {
                                     isLoading = true;
                                   });
                                   dynamic user =
-                                      _auth.signInWithEmailAndPassword(
+                                      await _auth.signInWithEmailAndPassword(
                                     _email,
                                     _password,
                                   );
                                   if (user == null) {
                                     setState(() {
-                                      error = _auth.error;
+                                      error = _auth.errorMess;
                                       isLoading = false;
                                     });
                                   }
@@ -137,7 +137,6 @@ class _SignInState extends State<SignIn> {
                           TextSpan(
                             recognizer: TapGestureRecognizer()
                               ..onTap = () {
-                                print('sign Up');
                                 widget.toggle!();
                               },
                             text: ' Sign Up',
@@ -152,7 +151,7 @@ class _SignInState extends State<SignIn> {
                     ),
                     Center(
                       child: Text(
-                        error,
+                        _auth.errorMess,
                         style: TextStyle(color: Colors.red, fontSize: 20),
                       ),
                     ),

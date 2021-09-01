@@ -18,8 +18,8 @@ class FireAuth with ChangeNotifier {
   }
 
   // error getter
-  String? _error = 'Please provide valid email';
-  String get error => _error!;
+  String _error = '';
+  String get errorMess => _error;
 
   // Checking User Status
   Stream<CustomUser?> get userStatus {
@@ -40,7 +40,8 @@ class FireAuth with ChangeNotifier {
       _user!.updateDisplayName(name);
       return _userFromFirebase(user: _user);
     } on FirebaseAuthException catch (e) {
-      _error = e.message;
+      _error = e.message!;
+      notifyListeners();
       return null;
     }
   }
@@ -49,11 +50,11 @@ class FireAuth with ChangeNotifier {
 
   Future signInWithEmailAndPassword(String email, String password) async {
     try {
-      UserCredential user = await _auth.signInWithEmailAndPassword(
+      UserCredential userR = await _auth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
-      User? _user = user.user;
+      User? _user = userR.user;
       return _userFromFirebase(user: _user);
     } catch (e) {
       print(e.toString());
