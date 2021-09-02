@@ -1,9 +1,13 @@
 import 'dart:io';
 
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart';
+import 'package:pma/local_services/firebase_services/firebase_store.dart';
 import 'package:pma/shared/contestDecoor.dart';
 
 class Contestant extends StatefulWidget {
@@ -14,14 +18,47 @@ class Contestant extends StatefulWidget {
 }
 
 class _ContestantState extends State<Contestant> {
-  XFile? image;
-  Future getImage() async {
-    var _imagePicker =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
-    setState(() {
-      image = _imagePicker;
-    });
-    print('The path is: ${_imagePicker!.name}');
+  static final _formKey = GlobalKey<FormState>();
+  LocalStore _store = LocalStore.store;
+  File? image;
+  String? _fullName;
+  String? _age;
+  String? _school;
+  String? _form;
+  String? _userpic;
+
+  Future<void> upLoadPic(File? image, BuildContext context) async {
+    final _fileName = basename(image!.path);
+    Reference reference =
+        FirebaseStorage.instance.ref('Contestant').child(_fileName);
+    UploadTask uploadTask = reference.putFile(image);
+    TaskSnapshot snapshot = await uploadTask.whenComplete(
+      () => setState(() {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Uploaded succesfully'),
+          ),
+        );
+      }),
+    );
+    _userpic = await snapshot.ref.getDownloadURL();
+  }
+
+  Future<void> getImage(BuildContext context) async {
+    try {
+      final _imagePicker =
+          await ImagePicker().pickImage(source: ImageSource.gallery);
+      if (_imagePicker != null) {
+        setState(() {
+          image = File(_imagePicker.path);
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text('Image get')));
+        });
+      }
+      print('The path is: ${_imagePicker!.name}');
+    } on Exception catch (e) {
+      print(e);
+    }
   }
 
   @override
@@ -48,7 +85,7 @@ class _ContestantState extends State<Contestant> {
               Center(
                 child: GestureDetector(
                   onTap: () {
-                    getImage();
+                    getImage(context);
                   },
                   child: CircleAvatar(
                     radius: 100,
@@ -58,8 +95,14 @@ class _ContestantState extends State<Contestant> {
                         height: 195,
                         width: 195,
                         child: image != null
-                            ? Image.file(image as File, fit: BoxFit.cover)
-                            : Icon(FontAwesomeIcons.camera),
+                            ? Image.file(
+                                image!,
+                                fit: BoxFit.cover,
+                              )
+                            : Icon(
+                                FontAwesomeIcons.camera,
+                                color: Color(0xFF000000),
+                              ),
                       ),
                     ),
                   ),
@@ -70,11 +113,19 @@ class _ContestantState extends State<Contestant> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 2, vertical: 15),
                 child: Form(
+                  key: _formKey,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       TextFormField(
+                        onChanged: (val) {
+                          setState(() {
+                            _fullName = val;
+                          });
+                        },
+                        validator: ((val) =>
+                            val!.length < 3 ? 'Add fullname' : null),
                         textInputAction: TextInputAction.next,
                         decoration: contestDecor.copyWith(
                           hintText: 'Fullname',
@@ -82,6 +133,12 @@ class _ContestantState extends State<Contestant> {
                       ),
                       SizedBox(height: 10.0),
                       TextFormField(
+                        validator: ((val) => val!.isEmpty ? 'Add Age' : null),
+                        onChanged: (val) {
+                          setState(() {
+                            _age = val;
+                          });
+                        },
                         textInputAction: TextInputAction.next,
                         keyboardType: TextInputType.phone,
                         decoration: contestDecor.copyWith(
@@ -90,6 +147,13 @@ class _ContestantState extends State<Contestant> {
                       ),
                       SizedBox(height: 10.0),
                       TextFormField(
+                        validator: ((val) =>
+                            val!.length < 3 ? 'Add School' : null),
+                        onChanged: (val) {
+                          setState(() {
+                            _school = val;
+                          });
+                        },
                         textInputAction: TextInputAction.next,
                         decoration: contestDecor.copyWith(
                           hintText: 'School',
@@ -97,6 +161,13 @@ class _ContestantState extends State<Contestant> {
                       ),
                       SizedBox(height: 10.0),
                       TextFormField(
+                        validator: ((val) =>
+                            val!.isEmpty ? 'Class required' : null),
+                        onChanged: (val) {
+                          setState(() {
+                            _form = val;
+                          });
+                        },
                         decoration: contestDecor.copyWith(
                           hintText: 'Form/Class',
                         ),
@@ -113,8 +184,19 @@ class _ContestantState extends State<Contestant> {
                                   topRight: Radius.circular(30)),
                             ),
                           ),
-                          onPressed: () {
-                            print('submit');
+                          onPressed: () async {
+                            if (_formKey.currentState!.validate()) {
+                              await upLoadPic(image, context).then((value) {
+                                _store.addContestant(
+                                  fullname: _fullName,
+                                  age: _age,
+                                  school: _school,
+                                  form: _form,
+                                  displayPic: _userpic,
+                                );
+                                Navigator.of(context).pop();
+                              });
+                            }
                           },
                           child: Text('Submit'),
                         ),
