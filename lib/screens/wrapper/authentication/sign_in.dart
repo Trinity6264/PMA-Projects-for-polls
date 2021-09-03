@@ -20,6 +20,7 @@ class _SignInState extends State<SignIn> {
   String _email = '';
   String _password = '';
   String error = '';
+  bool isSeen = true;
   @override
   Widget build(BuildContext context) {
     Size _size = MediaQuery.of(context).size;
@@ -53,6 +54,8 @@ class _SignInState extends State<SignIn> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           TextFormField(
+                            textInputAction: TextInputAction.next,
+                            keyboardType: TextInputType.emailAddress,
                             onChanged: ((val) => setState(() => _email = val)),
                             validator: (val) =>
                                 val!.isEmpty ? 'Provide email' : null,
@@ -67,15 +70,24 @@ class _SignInState extends State<SignIn> {
                             ),
                           ),
                           TextFormField(
+                            textInputAction: TextInputAction.done,
+                            obscureText: isSeen,
                             onChanged: ((val) =>
                                 setState(() => _password = val)),
                             validator: (val) =>
                                 val!.isEmpty ? 'Provide password' : null,
                             style: TextStyle(color: Color(0xFFFFFFFF)),
                             decoration: inputDecoration.copyWith(
-                              suffixIcon: Icon(
-                                Icons.remove_red_eye,
-                                color: Colors.amber,
+                              suffixIcon: IconButton(
+                                onPressed: () {
+                                  setState(() {
+                                    isSeen = !isSeen;
+                                  });
+                                },
+                                icon: Icon(
+                                  Icons.remove_red_eye,
+                                  color: Colors.amber,
+                                ),
                               ),
                               hintText: 'Password',
                               hintStyle: GoogleFonts.aldrich(

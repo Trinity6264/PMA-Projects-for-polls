@@ -3,11 +3,13 @@ import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
 import 'package:pma/local_services/firebase_services/firebase_store.dart';
+import 'package:pma/screens/loading.dart';
 import 'package:pma/shared/contestDecoor.dart';
 
 class Contestant extends StatefulWidget {
@@ -26,6 +28,7 @@ class _ContestantState extends State<Contestant> {
   String? _school;
   String? _form;
   String? _userpic;
+  bool isLoading = false;
 
   Future<void> upLoadPic(File? image, BuildContext context) async {
     final _fileName = basename(image!.path);
@@ -173,34 +176,43 @@ class _ContestantState extends State<Contestant> {
                         ),
                       ),
                       SizedBox(height: 20.0),
-                      Container(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            elevation: 2.0,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.only(
-                                  bottomLeft: Radius.circular(30),
-                                  topRight: Radius.circular(30)),
+                      isLoading
+                          ? SpinKitRipple(color: Colors.amber, size: 70)
+                          : Container(
+                              width: double.infinity,
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  elevation: 2.0,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.only(
+                                        bottomLeft: Radius.circular(30),
+                                        topRight: Radius.circular(30)),
+                                  ),
+                                ),
+                                onPressed: () async {
+                                  if (_formKey.currentState!.validate()) {
+                                    setState(() {
+                                      isLoading = true;
+                                    });
+                                    await upLoadPic(image, context)
+                                        .then((value) {
+                                      _store.addContestant(
+                                        fullname: _fullName,
+                                        age: _age,
+                                        school: _school,
+                                        form: _form,
+                                        displayPic: _userpic,
+                                      );
+                                      Navigator.of(context).pop();
+                                      setState(() {
+                                        isLoading = false;
+                                      });
+                                    });
+                                  }
+                                },
+                                child: Text('Submit'),
+                              ),
                             ),
-                          ),
-                          onPressed: () async {
-                            if (_formKey.currentState!.validate()) {
-                              await upLoadPic(image, context).then((value) {
-                                _store.addContestant(
-                                  fullname: _fullName,
-                                  age: _age,
-                                  school: _school,
-                                  form: _form,
-                                  displayPic: _userpic,
-                                );
-                                Navigator.of(context).pop();
-                              });
-                            }
-                          },
-                          child: Text('Submit'),
-                        ),
-                      ),
                     ],
                   ),
                 ),

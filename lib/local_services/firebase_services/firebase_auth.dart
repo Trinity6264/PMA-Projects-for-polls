@@ -56,8 +56,9 @@ class FireAuth with ChangeNotifier {
       );
       User? _user = userR.user;
       return _userFromFirebase(user: _user);
-    } catch (e) {
-      print(e.toString());
+    } on FirebaseAuthException catch (e) {
+      _error = e.message!;
+      notifyListeners();
     }
   }
 
