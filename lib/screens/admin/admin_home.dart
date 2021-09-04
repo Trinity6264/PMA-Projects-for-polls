@@ -1,9 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pma/local_services/firebase_services/firebase_auth.dart';
 import 'package:pma/local_services/firebase_services/firebase_store.dart';
-import 'package:pma/models/fire_store_user.dart';
 import 'package:pma/screens/admin/home_state.dart';
 import 'package:pma/screens/admin/new_contest.dart';
 import 'package:provider/provider.dart';
@@ -23,11 +21,11 @@ class AdminHome extends StatelessWidget {
       );
     }
 
-    return StreamProvider<List<FireStoreUser>?>.value(
-      initialData: [],
-      catchError: (_, __) => null,
-      value: LocalStore.store.contestant,
-      child: Scaffold(
+    return StreamProvider.value(
+      catchError: (__, _) => null,
+      value: LocalStore.store.getContestant,
+      initialData: null,
+      builder: (_, __) => Scaffold(
         appBar: AppBar(
           title: Text('Admin'),
           actions: [

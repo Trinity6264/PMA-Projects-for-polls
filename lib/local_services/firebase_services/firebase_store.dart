@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:pma/models/fire_store_user.dart';
 
 class LocalStore with ChangeNotifier {
   LocalStore._();
@@ -31,23 +30,18 @@ class LocalStore with ChangeNotifier {
     }
   }
 
-  List<FireStoreUser>? _listContestant({QuerySnapshot? snapshot}) {
-    return snapshot!.docs.isEmpty
-        ? null
-        : snapshot.docs
-            .map(
-              (e) => FireStoreUser(
-                fullName: e['fullname'],
-                age: e['age'],
-                school: e['school'],
-                form: e['form'],
-                userpic: e['userpic'],
-              ),
-            )
-            .toList();
+  // Delete data
+  Future deleteData(int index) async {
+    try {
+      QuerySnapshot snapshot = await _ref.get();
+      snapshot.docs[index].reference.delete();
+    } on FirebaseException catch (e) {
+      _errorMess = e.message!;
+      notifyListeners();
+    }
   }
 
-  Stream<List<FireStoreUser>?> get contestant {
-    return _ref.snapshots().map((event) => _listContestant(snapshot: event));
+  Stream<QuerySnapshot?> get getContestant {
+    return _ref.orderBy('fullname', descending: false).snapshots();
   }
 }

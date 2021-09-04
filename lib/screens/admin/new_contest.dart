@@ -9,7 +9,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
 import 'package:pma/local_services/firebase_services/firebase_store.dart';
-import 'package:pma/screens/loading.dart';
 import 'package:pma/shared/contestDecoor.dart';
 
 class Contestant extends StatefulWidget {
@@ -49,13 +48,13 @@ class _ContestantState extends State<Contestant> {
 
   Future<void> getImage(BuildContext context) async {
     try {
-      final _imagePicker =
-          await ImagePicker().pickImage(source: ImageSource.gallery);
+      final _imagePicker = await ImagePicker()
+          .pickImage(source: ImageSource.gallery, imageQuality: 50);
       if (_imagePicker != null) {
         setState(() {
           image = File(_imagePicker.path);
           ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text('Image get')));
+              .showSnackBar(SnackBar(content: Text('Image uploaded')));
         });
       }
       print('The path is: ${_imagePicker!.name}');

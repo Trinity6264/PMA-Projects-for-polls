@@ -1,9 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pma/local_services/firebase_services/firebase_auth.dart';
 import 'package:pma/local_services/firebase_services/firebase_store.dart';
 import 'package:pma/models/fire_user.dart';
+import 'package:pma/screens/admin/new_contest.dart';
 import 'package:pma/screens/loading.dart';
 import 'package:pma/screens/wrapper/authentication/authentication.dart';
 import 'package:pma/screens/wrapper/authentication/sign_in.dart';
@@ -35,8 +37,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider.value(
           value: FireAuth.auth,
         ),
-        ChangeNotifierProvider.value(
-          value: LocalStore.store,
+        StreamProvider<QuerySnapshot?>.value(
+          initialData: null,
+          value: LocalStore.store.getContestant,
         ),
       ],
       builder: (_, __) => MaterialApp(
@@ -54,6 +57,7 @@ class MyApp extends StatelessWidget {
           '/signUp': (_) => SignUp(),
           '/authentication': (_) => Authentication(),
           '/load': (_) => LoadingScreen(),
+          '/contestant': (_) => Contestant(),
         },
       ),
     );

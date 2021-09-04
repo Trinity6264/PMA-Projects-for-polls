@@ -162,10 +162,6 @@ class _HomeState extends State<Home> {
                         CircleAvatar(
                           maxRadius: 15,
                           backgroundColor: Colors.amber,
-                          child: CircleAvatar(
-                            maxRadius: 14,
-                            backgroundImage: AssetImage('images/tee.jpg'),
-                          ),
                         ),
                         SizedBox(height: _size.height * 0.1 / 9),
                         Text(
